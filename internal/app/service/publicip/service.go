@@ -1,8 +1,8 @@
 package publicip
 
 import (
-	"github.com/nitschmann/cfd/pkg/checkip"
-	"github.com/nitschmann/cfd/pkg/util/httpclient"
+	"github.com/nitschmann/cfdns/pkg/checkip"
+	"github.com/nitschmann/cfdns/pkg/util/httpclient"
 )
 
 // Service is the interface for the publicip service package

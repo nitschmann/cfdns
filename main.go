@@ -5,7 +5,7 @@ import (
 	"log"
 	"os/user"
 
-	"github.com/nitschmann/cfd/pkg/checkip"
+	"github.com/nitschmann/cfdns/pkg/checkip"
 )
 
 func main() {

@@ -4,7 +4,7 @@ import (
 	"errors"
 	"testing"
 
-	"github.com/nitschmann/cfd/pkg/util/httpclient"
+	"github.com/nitschmann/cfdns/pkg/util/httpclient"
 	"github.com/stretchr/testify/suite"
 )
 

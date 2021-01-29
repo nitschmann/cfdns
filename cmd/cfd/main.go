@@ -1,8 +1,8 @@
 package main
 
-import "github.com/nitschmann/cfd/internal/app/cmd"
+import "github.com/nitschmann/cfdns/internal/app/cmd"
 
-// Version is the global version the cfd CLI tool
+// Version is the global version the cfdns CLI tool
 var Version string
 
 func main() {

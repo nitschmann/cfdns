@@ -5,8 +5,8 @@ import (
 
 	"github.com/spf13/cobra"
 
-	publicIpServ "github.com/nitschmann/cfd/internal/app/service/publicip"
-	"github.com/nitschmann/cfd/pkg/util/httpclient"
+	publicIpServ "github.com/nitschmann/cfdns/internal/app/service/publicip"
+	"github.com/nitschmann/cfdns/pkg/util/httpclient"
 )
 
 func newPublicIpV4Cmd() *cobra.Command {

@@ -1,6 +1,6 @@
 package checkip
 
-import "github.com/nitschmann/cfd/pkg/util/httpclient"
+import "github.com/nitschmann/cfdns/pkg/util/httpclient"
 
 // Client is the interface for the checkip package
 type Client interface {

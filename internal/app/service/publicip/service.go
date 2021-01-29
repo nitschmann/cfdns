@@ -7,6 +7,7 @@ import (
 
 // Service is the interface for the publicip service package
 type Service interface {
+	FetchPublicIpV4() (string, error)
 }
 
 // ServiceObj implements the Service interface per default
@@ -21,6 +22,7 @@ func New(httpClient httpclient.Client) *ServiceObj {
 	}
 }
 
+// FetchPublicIpV4 fetches the public IPv4 address of the machine
 func (serv *ServiceObj) FetchPublicIpV4() (string, error) {
 	ip, err := serv.checkIpClient.GetPublicIpV4()
 	return ip, err

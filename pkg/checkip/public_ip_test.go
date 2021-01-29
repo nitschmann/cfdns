@@ -1,7 +1,7 @@
 package checkip
 
 import (
-	"fmt"
+	"errors"
 	"io/ioutil"
 	"net/http"
 	"strings"
@@ -72,6 +72,17 @@ func (suite *ClientObjSuite) TestGetPublicIpV4() {
 			wantErr: true,
 			errStr:  "Endpoint is not available. Could not detect public IPv4",
 		},
+		{
+			name: "with http request error",
+			c: &ClientObj{
+				httpClient: &getPublicIpV4HttpClient{},
+			},
+			httpResp:      &http.Response{},
+			httpRespError: errors.New("Random HTTP error"),
+			want:          "",
+			wantErr:       true,
+			errStr:        "Random HTTP error",
+		},
 	}
 
 	for _, tt := range tests {
@@ -83,7 +94,7 @@ func (suite *ClientObjSuite) TestGetPublicIpV4() {
 			suite.Equal(result, tt.want)
 
 			if tt.wantErr {
-				fmt.Println(err)
+				suite.Error(err)
 				suite.Contains(err.Error(), tt.errStr)
 			} else {
 				suite.NoError(err)

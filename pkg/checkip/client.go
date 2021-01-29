@@ -12,7 +12,12 @@ type ClientObj struct {
 	httpClient httpclient.Client
 }
 
-// New returns a new pointer instance of ClientObj
+// New returns a new pointer instance of ClientObj with default values
 func New() *ClientObj {
 	return &ClientObj{httpClient: httpclient.New()}
+}
+
+// NewWithHttpClient returns a new pointer instance of ClientObj with a custom http.Client
+func NewWithHttpClient(httpClient httpclient.Client) *ClientObj {
+	return &ClientObj{httpClient: httpClient}
 }

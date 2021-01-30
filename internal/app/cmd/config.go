@@ -28,4 +28,5 @@ func newConfigCmd() *configCmd {
 }
 
 func (cmd *configCmd) loadSubCommands() {
+	cmd.cmd.AddCommand(newConfigCreateCmd())
 }

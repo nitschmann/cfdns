@@ -67,6 +67,6 @@ cfdns is a tool which allows to manage Cloudflare DNS entries via the API easily
 }
 
 func printCliErrorAndExit(msg interface{}) {
-	fmt.Printf("An unexpected error occurred:\n%s", msg)
+	fmt.Printf("An unexpected error occurred:\n%s\n", msg)
 	os.Exit(1)
 }

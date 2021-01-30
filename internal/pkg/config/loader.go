@@ -1,8 +1,14 @@
 package config
 
 import (
+	"github.com/nitschmann/cfdns/internal/pkg/model"
 	"github.com/spf13/viper"
 )
+
+// AutoFilepath is the automatically detected path of the currently used config file
+func AutoFilepath() string {
+	return viper.ConfigFileUsed()
+}
 
 // SetUpLoader sets up the viper config framework settings
 func SetUpLoader() error {
@@ -24,7 +30,12 @@ func SetUpLoader() error {
 	return nil
 }
 
-// AutoFilepath is the automatically detected path of the currently used config file
-func AutoFilepath() string {
-	return viper.ConfigFileUsed()
+func Load() error {
+	profiles = new(map[string]*model.ConfigProfile)
+	err := viper.Unmarshal(profiles)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }

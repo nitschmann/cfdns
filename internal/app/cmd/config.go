@@ -29,4 +29,10 @@ func newConfigCmd() *configCmd {
 
 func (cmd *configCmd) loadSubCommands() {
 	cmd.cmd.AddCommand(newConfigCreateCmd())
+	cmd.cmd.AddCommand(newConfigFilepathCmd())
+
+	// profile command
+	profileCmd := newConfigProfileCmd()
+	profileCmd.loadSubCommands()
+	cmd.cmd.AddCommand(profileCmd.cmd)
 }

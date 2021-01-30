@@ -8,6 +8,7 @@ import (
 	"path"
 
 	"github.com/BurntSushi/toml"
+
 	configPkg "github.com/nitschmann/cfdns/internal/pkg/config"
 	"github.com/nitschmann/cfdns/internal/pkg/model"
 	"github.com/nitschmann/cfdns/internal/pkg/validator"
@@ -82,7 +83,7 @@ func (serv *CreateServiceObj) Create(p string, force bool) (string, error) {
 	}
 	defer f.Close()
 
-	err = serv.writeConfigProfileIntoFile(f, configProfile)
+	err = serv.writeConfigProfileToFile(f, configProfile)
 	if err != nil {
 		return "", err
 	}
@@ -112,7 +113,7 @@ func (serv *CreateServiceObj) initAndValidateProfileObj() (*model.ConfigProfile,
 	return profile, err
 }
 
-func (serv *CreateServiceObj) writeConfigProfileIntoFile(f *os.File, configProfile *model.ConfigProfile) error {
+func (serv *CreateServiceObj) writeConfigProfileToFile(f *os.File, configProfile *model.ConfigProfile) error {
 	list := make(map[string]*model.ConfigProfile)
 	list[configProfile.Name] = configProfile
 

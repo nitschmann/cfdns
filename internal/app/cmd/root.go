@@ -5,6 +5,8 @@ import (
 	"os"
 
 	"github.com/spf13/cobra"
+
+	"github.com/nitschmann/cfdns/internal/pkg/config"
 )
 
 var (
@@ -15,6 +17,11 @@ var (
 	_ = func() error {
 		rootCmd = NewRootCmd()
 		rootCmd.LoadSubCommands()
+
+		err := config.SetUpLoader()
+		if err != nil {
+			printCliErrorAndExit(err)
+		}
 
 		return nil
 	}()

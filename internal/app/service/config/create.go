@@ -1,14 +1,16 @@
 package config
 
 import (
+	"bytes"
 	"errors"
 	"fmt"
-	"io/ioutil"
 	"os"
 	"path"
-	"strings"
 
+	"github.com/BurntSushi/toml"
 	configPkg "github.com/nitschmann/cfdns/internal/pkg/config"
+	"github.com/nitschmann/cfdns/internal/pkg/model"
+	"github.com/nitschmann/cfdns/internal/pkg/validator"
 )
 
 // CreateService is the service interface to create config files
@@ -36,6 +38,11 @@ func NewCreateService(apiKey, email, zone string) *CreateServiceObj {
 func (serv *CreateServiceObj) Create(p string, force bool) (string, error) {
 	var configFilepath string
 
+	configProfile, err := serv.initAndValidateProfileObj()
+	if err != nil {
+		return configFilepath, err
+	}
+
 	if p == "" {
 		defaultPath, err := configPkg.DefaultFilepath()
 		if err != nil {
@@ -45,12 +52,13 @@ func (serv *CreateServiceObj) Create(p string, force bool) (string, error) {
 		p = defaultPath
 	}
 
-	err := serv.createPathDirectoryIfNotExists(p)
+	err = serv.createPathDirectoryIfNotExists(p)
 	if err != nil {
 		return configFilepath, err
 	}
 
 	configFilepath = path.Join(p, "config")
+	var f *os.File
 
 	if _, err := os.Stat(configFilepath); err == nil {
 		if !force {
@@ -61,10 +69,23 @@ func (serv *CreateServiceObj) Create(p string, force bool) (string, error) {
 		if err != nil {
 			return "", err
 		}
-	}
 
-	fileContent := []byte(serv.fileContent())
-	err = ioutil.WriteFile(configFilepath, fileContent, 0644)
+		f, err = os.OpenFile(configFilepath, os.O_APPEND|os.O_WRONLY, os.ModeAppend)
+		if err != nil {
+			return "", err
+		}
+	} else {
+		f, err = os.Create(configFilepath)
+		if err != nil {
+			return "", err
+		}
+	}
+	defer f.Close()
+
+	err = serv.writeConfigProfileIntoFile(f, configProfile)
+	if err != nil {
+		return "", err
+	}
 
 	return configFilepath, nil
 }
@@ -77,16 +98,34 @@ func (serv *CreateServiceObj) createPathDirectoryIfNotExists(p string) error {
 	return nil
 }
 
-func (serv *CreateServiceObj) fileContent() string {
-	contentStr := `
-[default]
-api_key = %s
-email = %s
-default_zone = %s`
+func (serv *CreateServiceObj) initAndValidateProfileObj() (*model.ConfigProfile, error) {
+	profile := &model.ConfigProfile{
+		Name:        "default",
+		ApiKey:      serv.apiKey,
+		Email:       serv.email,
+		DefaultZone: serv.zone,
+	}
 
-	content := fmt.Sprintf(contentStr, serv.apiKey, serv.email, serv.zone)
-	content = strings.TrimSuffix(content, "\n")
-	content = strings.TrimRight(content, " ")
+	validator := validator.NewModelValidator(profile)
+	err := validator.Validate()
 
-	return content
+	return profile, err
+}
+
+func (serv *CreateServiceObj) writeConfigProfileIntoFile(f *os.File, configProfile *model.ConfigProfile) error {
+	list := make(map[string]*model.ConfigProfile)
+	list[configProfile.Name] = configProfile
+
+	buf := new(bytes.Buffer)
+	err := toml.NewEncoder(buf).Encode(list)
+	if err != nil {
+		return err
+	}
+
+	_, err = f.Write(buf.Bytes())
+	if err != nil {
+		return err
+	}
+
+	return nil
 }

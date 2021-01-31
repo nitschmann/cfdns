@@ -8,9 +8,16 @@ type RecordNotFound struct {
 	IdentifierColumn string
 	Identifier       string
 	Err              error
+	PrintOriginalErr bool
 }
 
 // Error prints the full error message as string
 func (e *RecordNotFound) Error() string {
-	return fmt.Sprintf("Could not found %s identified with %s %s", e.Type, e.IdentifierColumn, e.Identifier)
+	errMsg := fmt.Sprintf("Could not found %s identified with %s %s", e.Type, e.IdentifierColumn, e.Identifier)
+
+	if e.PrintOriginalErr {
+		errMsg = fmt.Sprintf("Could not found %s identified with %s %s\n(%s)", e.Type, e.IdentifierColumn, e.Identifier, e.Err.Error())
+	}
+
+	return errMsg
 }

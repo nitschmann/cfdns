@@ -16,6 +16,7 @@ type DnsService interface {
 		priority int,
 		proxied bool,
 	) (model.CloudflareDnsRecord, error)
+	DeleteByIdOrNameAndType(zoneId, id string) (model.CloudflareDnsRecord, error)
 	List(zoneID string) ([]model.CloudflareDnsRecord, error)
 }
 
@@ -78,6 +79,27 @@ func (serv *DnsServiceObj) Create(
 	}
 
 	return dnsRecord, nil
+}
+
+// DeleteByIdOrNameAndType deletes a DNS record from a zone and identifies it either by its ID or name + type
+func (serv *DnsServiceObj) DeleteByIdOrNameAndType(zoneID, id, t string) (model.CloudflareDnsRecord, error) {
+	var dnsRecord model.CloudflareDnsRecord
+	var deletedDnsRecord model.CloudflareDnsRecord
+
+	dnsRecord, err := serv.Repository.Find(zoneID, id)
+	if err != nil {
+		dnsRecord, err = serv.Repository.FindSingleByNameAndType(zoneID, id, t)
+		if err != nil {
+			return deletedDnsRecord, err
+		}
+	}
+
+	deletedDnsRecord, err = serv.Repository.Delete(zoneID, dnsRecord)
+	if err != nil {
+		return deletedDnsRecord, err
+	}
+
+	return deletedDnsRecord, nil
 }
 
 // List returns a full list of DNS records for a zone

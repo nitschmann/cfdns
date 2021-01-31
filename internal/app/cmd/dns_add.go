@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/spf13/cobra"
 
@@ -13,10 +14,10 @@ func newDnsAddCmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:     "add [ZONE_ID_OR_NAME]",
 		Aliases: []string{"a", "add-record"},
-		Short:   "Add a new DNS record for a Cloudflare zone",
+		Short:   "Add a new DNS record to a Cloudflare zone",
 		Long: `
-Add a new DNS record for a Cloudflare zone with the specified parameters.
-The zone could be either identified by its ID or name. If successful, it prints the ID of the newly created DNS record.`,
+Add a new DNS record to a Cloudflare zone with the specified parameters. The zone could be either identified by its ID or name.
+If successful, it prints the ID, type and name of the newly created DNS record. [Format: __ID__,__type__,__name__]`,
 		Args: cobra.ExactArgs(1),
 		Run: func(cmd *cobra.Command, args []string) {
 			cloudflareConfig, err := cmdhelper.GetCloudflareConfigByFlags(cmd)
@@ -71,7 +72,7 @@ The zone could be either identified by its ID or name. If successful, it prints 
 				printCliErrorAndExit(err)
 			}
 
-			fmt.Println(dnsRecord.ID)
+			fmt.Println(strings.Join([]string{dnsRecord.ID, dnsRecord.Type, dnsRecord.Name}, ","))
 		},
 	}
 

@@ -30,5 +30,6 @@ func newDnsCmd() *dnsCmd {
 func (cmd *dnsCmd) loadSubCommands() {
 	cmd.cmd.AddCommand(newDnsAddCmd())
 	cmd.cmd.AddCommand(newDnsDeleteCmd())
+	cmd.cmd.AddCommand(newDnsUpdateToPublicIpV4Cmd())
 	cmd.cmd.AddCommand(newDnsRecordsCmd())
 }

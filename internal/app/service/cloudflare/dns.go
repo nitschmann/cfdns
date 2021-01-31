@@ -6,6 +6,7 @@ import (
 
 	cloudflareRepo "github.com/nitschmann/cfdns/internal/app/repository/cloudflare"
 	"github.com/nitschmann/cfdns/internal/pkg/model"
+	"github.com/nitschmann/cfdns/pkg/checkip"
 )
 
 // DnsService is the interface to manage Cloudflare zones service logic
@@ -127,6 +128,7 @@ func (serv *DnsServiceObj) List(zoneID string) ([]model.CloudflareDnsRecord, err
 	return list, err
 }
 
+// UpdateARecordContentToPublicIpV4 updates the DNS record content to fetched public IPv4
 func (serv *DnsServiceObj) UpdateARecordContentToPublicIpV4(zone model.CloudflareZone, id string) (model.CloudflareDnsRecord, error) {
 	var dnsRecord model.CloudflareDnsRecord
 
@@ -137,6 +139,18 @@ func (serv *DnsServiceObj) UpdateARecordContentToPublicIpV4(zone model.Cloudflar
 
 	if dnsRecord.Type != "A" {
 		return dnsRecord, errors.New("DNS record has to be type A")
+	}
+
+	checkipClient := checkip.New()
+	publicIpV4, err := checkipClient.GetPublicIpV4()
+	if err != nil {
+		return dnsRecord, err
+	}
+
+	dnsRecord.Content = publicIpV4
+	dnsRecord, err = serv.Repository.Update(zone.ID, dnsRecord)
+	if err != nil {
+		return dnsRecord, err
 	}
 
 	return dnsRecord, nil

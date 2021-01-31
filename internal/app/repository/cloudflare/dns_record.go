@@ -3,6 +3,7 @@ package cloudflare
 import (
 	"errors"
 	"fmt"
+	"time"
 
 	cloudflareSDK "github.com/cloudflare/cloudflare-go"
 
@@ -17,6 +18,7 @@ type DnsRecordRepository interface {
 	FetchList(zoneID string) ([]model.CloudflareDnsRecord, error)
 	Find(zoneID, id string) (model.CloudflareDnsRecord, error)
 	FindSingleByNameAndType(zoneID, name, t string) (model.CloudflareDnsRecord, error)
+	Update(zoneID string, dnsRecord model.CloudflareDnsRecord) (model.CloudflareDnsRecord, error)
 }
 
 // DnsRecordRepositoryObj implements the DnsRecordRepository interface per default
@@ -164,4 +166,21 @@ func (repo *DnsRecordRepositoryObj) FindSingleByNameAndType(zoneID, name, t stri
 	}
 
 	return dnsRecord, nil
+}
+
+// Update changes attributes of a single DNS record in a given zone
+func (repo *DnsRecordRepositoryObj) Update(zoneID string, dnsRecord model.CloudflareDnsRecord) (model.CloudflareDnsRecord, error) {
+	err := repo.Connector.UpdateDNSRecord(zoneID, dnsRecord.ID, cloudflareSDK.DNSRecord{
+		Type:    dnsRecord.Type,
+		Name:    dnsRecord.Name,
+		Content: dnsRecord.Content,
+		TTL:     dnsRecord.TTL,
+		Proxied: dnsRecord.Proxied,
+	})
+
+	if err == nil {
+		dnsRecord.ModifiedOn = time.Now()
+	}
+
+	return dnsRecord, err
 }

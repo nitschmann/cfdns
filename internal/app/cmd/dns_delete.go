@@ -45,12 +45,12 @@ If successful, it prints the ID, type and name of the deleted DNS record. [Forma
 			// Attributes
 			zoneID := zone.ID
 			dnsRecordID := args[1]
-			t, err := cmd.Flags().GetString("type")
+			dnsRecordType, err := cmd.Flags().GetString("type")
 			if err != nil {
 				printCliErrorAndExit(err)
 			}
 
-			deletedDnsRecord, err := dnsService.DeleteByIdOrNameAndType(zoneID, dnsRecordID, t)
+			deletedDnsRecord, err := dnsService.DeleteByIdOrNameAndType(zoneID, dnsRecordID, dnsRecordType)
 			if err != nil {
 				printCliErrorAndExit(err)
 			}

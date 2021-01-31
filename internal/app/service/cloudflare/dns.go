@@ -17,6 +17,7 @@ type DnsService interface {
 		proxied bool,
 	) (model.CloudflareDnsRecord, error)
 	DeleteByIdOrNameAndType(zoneId, id string) (model.CloudflareDnsRecord, error)
+	FindSingleByIdOrNameAndType(zoneID, id, t string) (model.CloudflareDnsRecord, error)
 	List(zoneID string) ([]model.CloudflareDnsRecord, error)
 }
 
@@ -83,15 +84,11 @@ func (serv *DnsServiceObj) Create(
 
 // DeleteByIdOrNameAndType deletes a DNS record from a zone and identifies it either by its ID or name + type
 func (serv *DnsServiceObj) DeleteByIdOrNameAndType(zoneID, id, t string) (model.CloudflareDnsRecord, error) {
-	var dnsRecord model.CloudflareDnsRecord
 	var deletedDnsRecord model.CloudflareDnsRecord
 
-	dnsRecord, err := serv.Repository.Find(zoneID, id)
+	dnsRecord, err := serv.FindSingleByIdOrNameAndType(zoneID, id, t)
 	if err != nil {
-		dnsRecord, err = serv.Repository.FindSingleByNameAndType(zoneID, id, t)
-		if err != nil {
-			return deletedDnsRecord, err
-		}
+		return deletedDnsRecord, err
 	}
 
 	deletedDnsRecord, err = serv.Repository.Delete(zoneID, dnsRecord)
@@ -100,6 +97,19 @@ func (serv *DnsServiceObj) DeleteByIdOrNameAndType(zoneID, id, t string) (model.
 	}
 
 	return deletedDnsRecord, nil
+}
+
+// FindSingleByIdOrNameAndType tries to find a single DNS record for a zone by ID or with its name and type.
+func (serv *DnsServiceObj) FindSingleByIdOrNameAndType(zoneID, id, t string) (model.CloudflareDnsRecord, error) {
+	dnsRecord, err := serv.Repository.Find(zoneID, id)
+	if err != nil {
+		dnsRecord, err = serv.Repository.FindSingleByNameAndType(zoneID, id, t)
+		if err != nil {
+			return dnsRecord, err
+		}
+	}
+
+	return dnsRecord, nil
 }
 
 // List returns a full list of DNS records for a zone

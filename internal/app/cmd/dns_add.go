@@ -42,7 +42,7 @@ If successful, it prints the ID, type and name of the newly created DNS record. 
 
 			// Attributes
 			zoneID := zone.ID
-			t, err := cmd.Flags().GetString("type")
+			dnsRecordType, err := cmd.Flags().GetString("type")
 			if err != nil {
 				printCliErrorAndExit(err)
 			}
@@ -67,7 +67,7 @@ If successful, it prints the ID, type and name of the newly created DNS record. 
 				printCliErrorAndExit(err)
 			}
 
-			dnsRecord, err := dnsService.Create(zoneID, t, name, content, ttl, priority, proxied)
+			dnsRecord, err := dnsService.Create(zoneID, dnsRecordType, name, content, ttl, priority, proxied)
 			if err != nil {
 				printCliErrorAndExit(err)
 			}

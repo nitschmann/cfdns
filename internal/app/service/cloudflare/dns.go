@@ -1,6 +1,9 @@
 package cloudflare
 
 import (
+	"errors"
+	"strings"
+
 	cloudflareRepo "github.com/nitschmann/cfdns/internal/app/repository/cloudflare"
 	"github.com/nitschmann/cfdns/internal/pkg/model"
 )
@@ -16,9 +19,10 @@ type DnsService interface {
 		priority int,
 		proxied bool,
 	) (model.CloudflareDnsRecord, error)
-	DeleteByIdOrNameAndType(zoneId, id string) (model.CloudflareDnsRecord, error)
-	FindSingleByIdOrNameAndType(zoneID, id, t string) (model.CloudflareDnsRecord, error)
+	DeleteByIdOrNameAndType(zone model.CloudflareZone, id string) (model.CloudflareDnsRecord, error)
+	FindSingleByIdOrNameAndType(zone model.CloudflareZone, id, t string) (model.CloudflareDnsRecord, error)
 	List(zoneID string) ([]model.CloudflareDnsRecord, error)
+	UpdateARecordContentToPublicIpV4(zone model.CloudflareZone, id string) (model.CloudflareDnsRecord, error)
 }
 
 // DnsServiceObj implements the DnsService interface per default
@@ -83,15 +87,15 @@ func (serv *DnsServiceObj) Create(
 }
 
 // DeleteByIdOrNameAndType deletes a DNS record from a zone and identifies it either by its ID or name + type
-func (serv *DnsServiceObj) DeleteByIdOrNameAndType(zoneID, id, t string) (model.CloudflareDnsRecord, error) {
+func (serv *DnsServiceObj) DeleteByIdOrNameAndType(zone model.CloudflareZone, id, t string) (model.CloudflareDnsRecord, error) {
 	var deletedDnsRecord model.CloudflareDnsRecord
 
-	dnsRecord, err := serv.FindSingleByIdOrNameAndType(zoneID, id, t)
+	dnsRecord, err := serv.FindSingleByIdOrNameAndType(zone, id, t)
 	if err != nil {
 		return deletedDnsRecord, err
 	}
 
-	deletedDnsRecord, err = serv.Repository.Delete(zoneID, dnsRecord)
+	deletedDnsRecord, err = serv.Repository.Delete(zone.ID, dnsRecord)
 	if err != nil {
 		return deletedDnsRecord, err
 	}
@@ -100,9 +104,14 @@ func (serv *DnsServiceObj) DeleteByIdOrNameAndType(zoneID, id, t string) (model.
 }
 
 // FindSingleByIdOrNameAndType tries to find a single DNS record for a zone by ID or with its name and type.
-func (serv *DnsServiceObj) FindSingleByIdOrNameAndType(zoneID, id, t string) (model.CloudflareDnsRecord, error) {
+func (serv *DnsServiceObj) FindSingleByIdOrNameAndType(zone model.CloudflareZone, id, t string) (model.CloudflareDnsRecord, error) {
+	zoneID := zone.ID
 	dnsRecord, err := serv.Repository.Find(zoneID, id)
 	if err != nil {
+		if !strings.Contains(id, "."+zone.Name) {
+			id = zone.NormalizeDnsRecordName(id)
+		}
+
 		dnsRecord, err = serv.Repository.FindSingleByNameAndType(zoneID, id, t)
 		if err != nil {
 			return dnsRecord, err
@@ -116,4 +125,19 @@ func (serv *DnsServiceObj) FindSingleByIdOrNameAndType(zoneID, id, t string) (mo
 func (serv *DnsServiceObj) List(zoneID string) ([]model.CloudflareDnsRecord, error) {
 	list, err := serv.Repository.FetchList(zoneID)
 	return list, err
+}
+
+func (serv *DnsServiceObj) UpdateARecordContentToPublicIpV4(zone model.CloudflareZone, id string) (model.CloudflareDnsRecord, error) {
+	var dnsRecord model.CloudflareDnsRecord
+
+	dnsRecord, err := serv.FindSingleByIdOrNameAndType(zone, id, "A")
+	if err != nil {
+		return dnsRecord, err
+	}
+
+	if dnsRecord.Type != "A" {
+		return dnsRecord, errors.New("DNS record has to be type A")
+	}
+
+	return dnsRecord, nil
 }

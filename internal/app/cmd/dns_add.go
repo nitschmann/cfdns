@@ -72,7 +72,11 @@ If successful, it prints the ID, type and name of the newly created DNS record. 
 				printCliErrorAndExit(err)
 			}
 
-			fmt.Println(strings.Join([]string{dnsRecord.ID, dnsRecord.Type, dnsRecord.Name}, ","))
+			fmt.Println(strings.Join([]string{
+				dnsRecord.ID,
+				dnsRecord.Type,
+				zone.NormalizeDnsRecordName(dnsRecord.Name),
+			}, ","))
 		},
 	}
 

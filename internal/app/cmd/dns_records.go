@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"fmt"
+	"strconv"
 	"strings"
 
 	"github.com/spf13/cobra"
@@ -10,15 +11,14 @@ import (
 	"github.com/nitschmann/cfdns/internal/pkg/util/cmdhelper"
 )
 
-func newZonesCmd() *cobra.Command {
+func newDnsRecordsCmd() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:     "zones",
-		Aliases: []string{"z"},
-		Short:   "Print a list of all Cloudflare zones for the configuration",
+		Use:     "records [ZONE_ID_OR_NAME]",
+		Aliases: []string{"list", "r"},
+		Short:   "List all DNS records for a Cloudflare zone",
 		Long: `
-Print a list of all Cloudflare zones with their most important details in a table.
-It uses the configuration of the specified profile or directly the api-key and email flag (if set).
-		`,
+List all DNS records for a Cloudflare zone in a table. The zone could be either identified by its ID or name.`,
+		Args: cobra.ExactArgs(1),
 		Run: func(cmd *cobra.Command, args []string) {
 			cloudflareConfig, err := cmdhelper.GetCloudflareConfigByFlags(cmd)
 			if err != nil {
@@ -30,7 +30,17 @@ It uses the configuration of the specified profile or directly the api-key and e
 				printCliErrorAndExit(err)
 			}
 
-			zones, err := zoneService.List()
+			zone, err := zoneService.FindByIdOrName(args[0])
+			if err != nil {
+				printCliErrorAndExit(err)
+			}
+
+			dnsService, err := cloudflareServ.NewDnsService(cloudflareConfig)
+			if err != nil {
+				printCliErrorAndExit(err)
+			}
+
+			dnsRecords, err := dnsService.List(zone.ID)
 			if err != nil {
 				printCliErrorAndExit(err)
 			}
@@ -40,21 +50,34 @@ It uses the configuration of the specified profile or directly the api-key and e
 				printCliErrorAndExit(err)
 			}
 
-			columnNames := []string{"ID", "Name", "Type", "Status", "Created At", "Modified On"}
+			columnNames := []string{
+				"ID",
+				"Type",
+				"Name",
+				"Content",
+				"TTL",
+				"Priority",
+				"Proxied",
+				"Created On",
+				"Modified On",
+			}
 			table := cmdhelper.TableWithHeader(columnNames)
 
 			if withoutTable {
 				fmt.Println(strings.Join(columnNames, ","))
 			}
 
-			for _, z := range zones {
+			for _, d := range dnsRecords {
 				line := []string{
-					z.ID,
-					z.Name,
-					z.Type,
-					z.Status,
-					z.CreatedOn.String(),
-					z.ModifiedOn.String(),
+					d.ID,
+					d.Type,
+					d.Name,
+					d.Content,
+					strconv.Itoa(d.TTL),
+					strconv.Itoa(d.Priority),
+					strconv.FormatBool(d.Proxied),
+					d.CreatedOn.String(),
+					d.ModifiedOn.String(),
 				}
 
 				if withoutTable {
@@ -62,13 +85,11 @@ It uses the configuration of the specified profile or directly the api-key and e
 				} else {
 					table.Append(line)
 				}
-
 			}
 
 			if !withoutTable {
 				table.Render()
 			}
-
 		},
 	}
 

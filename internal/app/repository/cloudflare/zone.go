@@ -3,34 +3,37 @@ package cloudflare
 import (
 	cloudflareSDK "github.com/cloudflare/cloudflare-go"
 
+	"github.com/nitschmann/cfdns/internal/pkg/customerror"
 	"github.com/nitschmann/cfdns/internal/pkg/model"
 )
 
 // ZoneRepository is the data interface for the Cloudflare zone API
 type ZoneRepository interface {
 	FetchList() ([]model.CloudflareZone, error)
+	Find(id string) (model.CloudflareZone, error)
+	FindByName(name string) (model.CloudflareZone, error)
 }
 
-// ZoneRepositoryObj implements the ZoneRepository per default
+// ZoneRepositoryObj implements the ZoneRepository interface per default
 type ZoneRepositoryObj struct {
 	Connector *cloudflareSDK.API
 }
 
-// NewZoneRepository
+// NewZoneRepository returns a new pointer instance NewZoneRepositoryObj with default values
 func NewZoneRepository(config *model.CloudflareConfig) (*ZoneRepositoryObj, error) {
-	var obj *ZoneRepositoryObj
+	var repository *ZoneRepositoryObj
 
 	connector, err := cloudflareSDK.New(config.ApiKey, config.Email)
 	if err != nil {
-		return obj, err
+		return repository, err
 	}
 
-	obj = &ZoneRepositoryObj{Connector: connector}
+	repository = &ZoneRepositoryObj{Connector: connector}
 
-	return obj, nil
+	return repository, nil
 }
 
-// FetchList
+// FetchList fetches the list of all zones for the account
 func (repo *ZoneRepositoryObj) FetchList() ([]model.CloudflareZone, error) {
 	var list []model.CloudflareZone
 
@@ -51,4 +54,54 @@ func (repo *ZoneRepositoryObj) FetchList() ([]model.CloudflareZone, error) {
 	}
 
 	return list, nil
+}
+
+// Find fetches the details of a Cloudflare zone via the API by a specific zone ID
+func (repo *ZoneRepositoryObj) Find(id string) (model.CloudflareZone, error) {
+	var zone model.CloudflareZone
+
+	zoneDetails, err := repo.Connector.ZoneDetails(id)
+	if err != nil {
+		return zone, &customerror.RecordNotFound{
+			Type:             "CloudflareZone",
+			IdentifierColumn: "ID",
+			Identifier:       id,
+		}
+	}
+
+	zone = model.CloudflareZone{
+		ID:         zoneDetails.ID,
+		Name:       zoneDetails.Name,
+		Type:       zoneDetails.Type,
+		Status:     zoneDetails.Status,
+		CreatedOn:  zoneDetails.CreatedOn,
+		ModifiedOn: zoneDetails.ModifiedOn,
+	}
+
+	return zone, nil
+}
+
+// FindByName fetches the details of a Cloudflare zone via the API by a specific zone name
+func (repo *ZoneRepositoryObj) FindByName(name string) (model.CloudflareZone, error) {
+	var zone model.CloudflareZone
+
+	zoneID, err := repo.Connector.ZoneIDByName(name)
+	if err != nil {
+		if err.Error() == "Zone could not be found" {
+			return zone, &customerror.RecordNotFound{
+				Type:             "CloudflareZone",
+				IdentifierColumn: "Name",
+				Identifier:       name,
+			}
+		} else {
+			return zone, err
+		}
+	}
+
+	zone, err = repo.Find(zoneID)
+	if err != nil {
+		return zone, err
+	}
+
+	return zone, nil
 }

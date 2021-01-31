@@ -2,11 +2,13 @@ package cloudflare
 
 import (
 	cloudflareRepo "github.com/nitschmann/cfdns/internal/app/repository/cloudflare"
+	"github.com/nitschmann/cfdns/internal/pkg/customerror"
 	"github.com/nitschmann/cfdns/internal/pkg/model"
 )
 
 // ZoneService is the interface to manage Cloudflare zones service logic
 type ZoneService interface {
+	FindByIdOrName(id string) (model.CloudflareZone, error)
 	List() ([]model.CloudflareZone, error)
 }
 
@@ -18,24 +20,43 @@ type ZoneServiceObj struct {
 
 // NewZoneService returns a new pointer instance of ZoneServiceObj with default values
 func NewZoneService(config *model.CloudflareConfig) (*ZoneServiceObj, error) {
-	var obj *ZoneServiceObj
+	var service *ZoneServiceObj
 
 	err := config.Validate()
 	if err != nil {
-		return obj, err
+		return service, err
 	}
 
 	repo, err := cloudflareRepo.NewZoneRepository(config)
 	if err != nil {
-		return obj, err
+		return service, err
 	}
 
-	obj = &ZoneServiceObj{
+	service = &ZoneServiceObj{
 		Config:     config,
 		Repository: repo,
 	}
 
-	return obj, nil
+	return service, nil
+}
+
+// FindByIdOrName tries to find a Cloudflare zone through the API via its ID or name
+func (serv *ZoneServiceObj) FindByIdOrName(id string) (model.CloudflareZone, error) {
+	var zone model.CloudflareZone
+
+	zone, err := serv.Repository.FindByName(id)
+	if err != nil {
+		if _, ok := err.(*customerror.RecordNotFound); ok {
+			zone, err = serv.Repository.Find(id)
+			if err != nil {
+				return zone, err
+			}
+		} else {
+			return zone, err
+		}
+	}
+
+	return zone, nil
 }
 
 // List returns a full list of zones

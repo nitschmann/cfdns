@@ -13,8 +13,8 @@ func newConfigProfileListCmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:     "list",
 		Aliases: []string{"l", "names"},
-		Short:   "List the currently defined profile names",
-		Long:    "List the currently defined profile names in the given config file.",
+		Short:   "Print a list of the currently defined profile names",
+		Long:    "Print a list of the currently defined profile names in the given config file.",
 		Run: func(cmd *cobra.Command, args []string) {
 			var configFilepath string
 

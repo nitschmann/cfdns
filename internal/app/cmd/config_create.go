@@ -53,9 +53,9 @@ will create the file automatically under ~/.cfdns/config (home dir of the curren
 		},
 	}
 
-	cmd.Flags().StringP("api-key", "a", "", "API Key")
+	cmd.Flags().StringP("api-key", "a", "", "Cloudflare API key")
 	cmd.MarkFlagRequired("api-key")
-	cmd.Flags().StringP("email", "e", "", "API Email")
+	cmd.Flags().StringP("email", "e", "", "Cloudflare API email")
 	cmd.MarkFlagRequired("email")
 
 	cmd.Flags().BoolP("force", "f", false, "Force create (even if file already exists)")

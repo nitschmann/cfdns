@@ -45,6 +45,7 @@ func (r *RootCmd) LoadSubCommands() {
 	cmd := r.Cmd
 	cmd.AddCommand(newPublicIpV4Cmd())
 	cmd.AddCommand(newVersionCmd())
+	cmd.AddCommand(newZonesCmd())
 
 	// config command
 	configCmd := newConfigCmd()

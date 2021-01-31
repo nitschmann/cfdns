@@ -31,8 +31,8 @@ func SetUpLoader() error {
 }
 
 func Load() error {
-	profiles = new(map[string]*model.ConfigProfile)
-	err := viper.Unmarshal(profiles)
+	profiles = make(map[string]*model.ConfigProfile)
+	err := viper.Unmarshal(&profiles)
 	if err != nil {
 		return err
 	}

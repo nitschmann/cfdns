@@ -13,7 +13,7 @@ type ConfigProfile struct {
 }
 
 // Validate checks if the ConfigProfile struct is valid
-func (p *ConfigProfile) Validate() error {
+func (p ConfigProfile) Validate() error {
 	validate := validator.New()
 	return validate.Struct(p)
 }

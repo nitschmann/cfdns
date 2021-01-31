@@ -15,9 +15,9 @@ func newDnsRecordsCmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:     "records [ZONE_ID_OR_NAME]",
 		Aliases: []string{"list", "r"},
-		Short:   "List all DNS records for a Cloudflare zone",
+		Short:   "Print list of all DNS records for a Cloudflare zone",
 		Long: `
-List all DNS records for a Cloudflare zone in a table. The zone could be either identified by its ID or name.`,
+Print list of all DNS records for a Cloudflare zone in a table. The zone could be either identified by its ID or name.`,
 		Args: cobra.ExactArgs(1),
 		Run: func(cmd *cobra.Command, args []string) {
 			cloudflareConfig, err := cmdhelper.GetCloudflareConfigByFlags(cmd)

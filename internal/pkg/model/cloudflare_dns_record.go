@@ -9,7 +9,8 @@ import (
 // CloudflareZone describes a Cloudflare DNS record
 type CloudflareDnsRecord struct {
 	ID         string
-	Type       string `validate:"required"`
+	ZoneID     string `validate:"required"`
+	Type       string `validate:"required,oneof='A' 'AAAA' 'CNAME' 'HTTPS' 'TXT' 'SRV' 'LOC' 'MX' 'NS' 'SPF' 'CERT' 'DNSKEY' 'DS' 'NAPTR' 'SMIMEA' 'SSHFP' 'SVCB' 'TLSA' 'URI'"`
 	Name       string `validate:"required,max=255"`
 	Content    string `validate:"required"`
 	TTL        int    `validate:"required"`

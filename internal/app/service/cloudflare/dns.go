@@ -7,7 +7,15 @@ import (
 
 // DnsService is the interface to manage Cloudflare zones service logic
 type DnsService interface {
-	// FindByIdOrName(id string) (model.CloudflareZone, error)
+	Create(
+		zoneID string,
+		t string,
+		name string,
+		content string,
+		ttl int,
+		priority int,
+		proxied bool,
+	) (model.CloudflareDnsRecord, error)
 	List(zoneID string) ([]model.CloudflareDnsRecord, error)
 }
 
@@ -37,6 +45,39 @@ func NewDnsService(config *model.CloudflareConfig) (*DnsServiceObj, error) {
 	}
 
 	return service, nil
+}
+
+// Create a new DNS record
+func (serv *DnsServiceObj) Create(
+	zoneID string,
+	t string,
+	name string,
+	content string,
+	ttl int,
+	priority int,
+	proxied bool,
+) (model.CloudflareDnsRecord, error) {
+	dnsRecord := model.CloudflareDnsRecord{
+		ZoneID:   zoneID,
+		Type:     t,
+		Name:     name,
+		Content:  content,
+		TTL:      ttl,
+		Priority: priority,
+		Proxied:  proxied,
+	}
+
+	err := dnsRecord.Validate()
+	if err != nil {
+		return dnsRecord, err
+	}
+
+	dnsRecord, err = serv.Repository.Create(dnsRecord)
+	if err != nil {
+		return dnsRecord, err
+	}
+
+	return dnsRecord, nil
 }
 
 // List returns a full list of DNS records for a zone

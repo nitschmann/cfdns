@@ -28,5 +28,6 @@ func newDnsCmd() *dnsCmd {
 }
 
 func (cmd *dnsCmd) loadSubCommands() {
+	cmd.cmd.AddCommand(newDnsAddCmd())
 	cmd.cmd.AddCommand(newDnsRecordsCmd())
 }

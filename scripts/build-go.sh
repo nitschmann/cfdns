@@ -21,6 +21,11 @@ given_os=$2
 given_arch=$3
 version=$4
 
+if ! [ -x "$(command -v git)" ]; then
+  echo 'Error: releaser (https://github.com/nitschmann/releaser) is not installed.' >&2
+  exit 1
+fi
+
 if ! contains_element ${command} "${supported_command[@]}"; then
   echo "Command is not supported!"
   exit 1

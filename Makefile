@@ -24,3 +24,65 @@ lint:
 .PHONY: check-misspell
 check-misspell:
 	misspell ./**/* -error
+
+.PHONY: build-latest
+build-latest: build-latest-darwin build-latest-linux
+
+.PHONY: build-latest-darwin
+build-latest-darwin: build-latest-darwin-amd64
+
+.PHONY: build-latest-darwin-amd64
+build-latest-darwin-amd64:
+	$(LATEST_DARWIN_BUILD) amd64
+
+.PHONY: build-latest-linux
+build-latest-linux: build-latest-linux-386 build-latest-linux-amd64 build-latest-linux-arm build-latest-linux-arm64
+
+.PHONY: build-latest-linux-386
+build-latest-linux-386:
+	$(LATEST_LINUX_BUILD) 386
+
+.PHONY: build-latest-linux-amd64
+build-latest-linux-amd64:
+	$(LATEST_LINUX_BUILD) amd64
+
+.PHONY: build-latest-linux-arm
+build-latest-linux-arm:
+	$(LATEST_LINUX_BUILD) arm
+
+.PHONY: build-latest-linux-arm64
+build-latest-linux-arm64:
+	$(LATEST_LINUX_BUILD) arm64
+
+.PHONY: build-new-version
+build-new-version: build-new-version-darwin build-new-version-linux
+
+.PHONY: build-new-version-darwin
+build-new-version-darwin: build-new-version-darwin-amd64
+
+.PHONY: build-new-version-darwin-amd64
+build-new-version-darwin-amd64:
+	$(NEW_VERSION_BUILD_DARWIN) amd64
+
+.PHONY: build-new-version-linux
+build-new-version-linux: build-new-version-linux-386 build-new-version-linux-amd64 build-new-version-linux-arm build-new-version-linux-arm64
+
+.PHONY: build-new-version-linux-386
+build-new-version-linux-386:
+	$(NEW_VERSION_BUILD_LINUX) 386
+
+.PHONY: build-new-version-linux-amd64
+build-new-version-linux-amd64:
+	$(NEW_VERSION_BUILD_LINUX) amd64
+
+.PHONY: build-new-version-linux-arm
+build-new-version-linux-arm:
+	$(NEW_VERSION_BUILD_LINUX) arm
+
+.PHONY: build-new-version-linux-arm64
+build-new-version-linux-arm64:
+	$(NEW_VERSION_BUILD_LINUX) arm64
+
+.PHONY: clean-build
+clean-build:
+	rm -rf .build/releaser*

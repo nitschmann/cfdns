@@ -101,10 +101,9 @@ func (serv *CreateServiceObj) createPathDirectoryIfNotExists(p string) error {
 
 func (serv *CreateServiceObj) initAndValidateProfileObj() (*model.ConfigProfile, error) {
 	profile := &model.ConfigProfile{
-		Name:        "default",
-		ApiKey:      serv.apiKey,
-		Email:       serv.email,
-		DefaultZone: serv.zone,
+		Name:   "default",
+		ApiKey: serv.apiKey,
+		Email:  serv.email,
 	}
 
 	validator := validator.NewModelValidator(profile)

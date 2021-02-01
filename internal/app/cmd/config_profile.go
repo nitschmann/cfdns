@@ -28,5 +28,7 @@ func newConfigProfileCmd() *configProfileCmd {
 }
 
 func (cmd *configProfileCmd) loadSubCommands() {
+	cmd.cmd.AddCommand(newConfigProfileAddCmd())
+	cmd.cmd.AddCommand(newConfigProfileDeleteCmd())
 	cmd.cmd.AddCommand(newConfigProfileListCmd())
 }

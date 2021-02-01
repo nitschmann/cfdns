@@ -64,7 +64,7 @@ func NewRootCmd() *RootCmd {
 		Use:   "cfdns",
 		Short: "CLI tool to manage Cloudflare DNS records",
 		Long: `
-cfdns is a tool that allows the management of Cloudflare DNS records via the API easily within a CLI. It also has the option to set dynamically the public IPv4 of the machine (or the network itself), through detection, for specific DNS records. A system wide config file allows working with different profiles (API keys and Cloudflare zones) at the same time. This tool does NOT cover anything else of the Cloudflare API.`,
+cfdns is a tool that allows the management of Cloudflare DNS records via the API easily within a CLI. It also has the option to set dynamically the public IPv4 of the machine (or the network itself), through detection, for specific DNS records. A system wide config file allows working with different profiles (API key and email) at the same time. This tool does NOT cover anything else of the Cloudflare API.`,
 		PersistentPreRun: func(cmd *cobra.Command, args []string) {
 			err := config.Load()
 			if err != nil {

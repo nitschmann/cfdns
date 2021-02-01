@@ -6,10 +6,9 @@ import (
 
 // ConfigProfile is a single profile item in the config file
 type ConfigProfile struct {
-	Name        string `mapstructure:"-" toml:"-" validate:"required,lowercase,alphanum"`
-	ApiKey      string `mapstructure:"api_key" toml:"api_key" validate:"required"`
-	Email       string `mapstructure:"email" toml:"email" validate:"required,email"`
-	DefaultZone string `mapstructure:"default_zone" toml:"default_zone" validate:"omitempty,lowercase"`
+	Name   string `mapstructure:"-" toml:"-" validate:"required,lowercase,alphanum"`
+	ApiKey string `mapstructure:"api_key" toml:"api_key" validate:"required"`
+	Email  string `mapstructure:"email" toml:"email" validate:"required,email"`
 }
 
 // Validate checks if the ConfigProfile struct is valid

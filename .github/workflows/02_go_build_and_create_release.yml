@@ -2,7 +2,7 @@ name: New release with binaries
 
 on:
   push:
-    branches: [ master ]
+    branches: [ main ]
 
 jobs:
   build:

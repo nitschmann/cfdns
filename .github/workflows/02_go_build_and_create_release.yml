@@ -1,4 +1,4 @@
-name: New release with binaries
+name: Build and create new release with binaries as assets
 
 on:
   push:
@@ -29,11 +29,19 @@ jobs:
     - name: Create info for the new release
       id: release_info
       run: |
-        /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/nitschmann/releaser/master/scripts/install.sh)"
+        releases_base_url="https://github.com/nitschmann/releaser/releases"
+        latest_release_url="$releases_base_url/latest"
+        latest_release_tag_url=$(curl -Ls -w %{url_effective} -o /dev/null $latest_release_url)
+        latest_release_tag=${latest_release_tag_url##*/}
+        binary_name="releaser-linux-amd64"
+        binary_download_url="$releases_base_url/download/$latest_release_tag/$binary_name"
 
-        changelog=$(releaser changelog)
-        new_version=$(releaser  new-version)
-        title=$(releaser title)
+        curl -o ./releaser -L $binary_download_url
+        chmod +x ./releaser
+
+        changelog=$(./releaser changelog)
+        new_version=$(./releaser  new-version)
+        title=$(./releaser title)
 
         changelog="${changelog//'%'/'%25'}"
         changelog="${changelog//$'\n'/'%0A'}"

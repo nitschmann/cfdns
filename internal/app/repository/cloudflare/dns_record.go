@@ -11,37 +11,37 @@ import (
 	"github.com/nitschmann/cfdns/internal/pkg/model"
 )
 
-// DnsRecordRepository is the data interface for the Cloudflare DNS record API
-type DnsRecordRepository interface {
-	Create(obj model.CloudflareDnsRecord) (model.CloudflareDnsRecord, error)
-	Delete(zoneID string, dnsRecord model.CloudflareDnsRecord) (model.CloudflareDnsRecord, error)
-	FetchList(zoneID string) ([]model.CloudflareDnsRecord, error)
-	Find(zoneID, id string) (model.CloudflareDnsRecord, error)
-	FindSingleByNameAndType(zoneID, name, t string) (model.CloudflareDnsRecord, error)
-	Update(zoneID string, dnsRecord model.CloudflareDnsRecord) (model.CloudflareDnsRecord, error)
+// DNSRecordRepository is the data interface for the Cloudflare DNS record API
+type DNSRecordRepository interface {
+	Create(obj model.CloudflareDNSRecord) (model.CloudflareDNSRecord, error)
+	Delete(zoneID string, dnsRecord model.CloudflareDNSRecord) (model.CloudflareDNSRecord, error)
+	FetchList(zoneID string) ([]model.CloudflareDNSRecord, error)
+	Find(zoneID, id string) (model.CloudflareDNSRecord, error)
+	FindSingleByNameAndType(zoneID, name, t string) (model.CloudflareDNSRecord, error)
+	Update(zoneID string, dnsRecord model.CloudflareDNSRecord) (model.CloudflareDNSRecord, error)
 }
 
-// DnsRecordRepositoryObj implements the DnsRecordRepository interface per default
-type DnsRecordRepositoryObj struct {
+// DNSRecordRepositoryObj implements the DNSRecordRepository interface per default
+type DNSRecordRepositoryObj struct {
 	Connector *cloudflareSDK.API
 }
 
-// NewDnsRecordRepository returns a new pointer instance of DnsRecordRepositoryObj with default values
-func NewDnsRecordRepository(config *model.CloudflareConfig) (*DnsRecordRepositoryObj, error) {
-	var repository *DnsRecordRepositoryObj
+// NewDNSRecordRepository returns a new pointer instance of DNSRecordRepositoryObj with default values
+func NewDNSRecordRepository(config *model.CloudflareConfig) (*DNSRecordRepositoryObj, error) {
+	var repository *DNSRecordRepositoryObj
 
-	connector, err := cloudflareSDK.New(config.ApiKey, config.Email)
+	connector, err := cloudflareSDK.New(config.APIKey, config.Email)
 	if err != nil {
 		return repository, err
 	}
 
-	repository = &DnsRecordRepositoryObj{Connector: connector}
+	repository = &DNSRecordRepositoryObj{Connector: connector}
 
 	return repository, nil
 }
 
 // Create a new DNS record for a zone
-func (repo *DnsRecordRepositoryObj) Create(obj model.CloudflareDnsRecord) (model.CloudflareDnsRecord, error) {
+func (repo *DNSRecordRepositoryObj) Create(obj model.CloudflareDNSRecord) (model.CloudflareDNSRecord, error) {
 	response, err := repo.Connector.CreateDNSRecord(obj.ZoneID, cloudflareSDK.DNSRecord{
 		Type:     obj.Type,
 		Name:     obj.Name,
@@ -62,14 +62,14 @@ func (repo *DnsRecordRepositoryObj) Create(obj model.CloudflareDnsRecord) (model
 }
 
 // Delete a DNS record with given ID from a zone
-func (repo *DnsRecordRepositoryObj) Delete(zoneID string, dnsRecord model.CloudflareDnsRecord) (model.CloudflareDnsRecord, error) {
+func (repo *DNSRecordRepositoryObj) Delete(zoneID string, dnsRecord model.CloudflareDNSRecord) (model.CloudflareDNSRecord, error) {
 	err := repo.Connector.DeleteDNSRecord(zoneID, dnsRecord.ID)
 	return dnsRecord, err
 }
 
 // FetchList fetches the list of all DNS records for a zone
-func (repo *DnsRecordRepositoryObj) FetchList(zoneID string) ([]model.CloudflareDnsRecord, error) {
-	var list []model.CloudflareDnsRecord
+func (repo *DNSRecordRepositoryObj) FetchList(zoneID string) ([]model.CloudflareDNSRecord, error) {
+	var list []model.CloudflareDNSRecord
 
 	dnsRecords, err := repo.Connector.DNSRecords(zoneID, cloudflareSDK.DNSRecord{})
 	if err != nil {
@@ -77,7 +77,7 @@ func (repo *DnsRecordRepositoryObj) FetchList(zoneID string) ([]model.Cloudflare
 	}
 
 	for _, d := range dnsRecords {
-		list = append(list, model.CloudflareDnsRecord{
+		list = append(list, model.CloudflareDNSRecord{
 			ID:         d.ID,
 			ZoneID:     d.ZoneID,
 			Type:       d.Type,
@@ -95,13 +95,13 @@ func (repo *DnsRecordRepositoryObj) FetchList(zoneID string) ([]model.Cloudflare
 }
 
 // Find a single DNS record for a given zone ID and record ID
-func (repo *DnsRecordRepositoryObj) Find(zoneID, id string) (model.CloudflareDnsRecord, error) {
-	var dnsRecord model.CloudflareDnsRecord
+func (repo *DNSRecordRepositoryObj) Find(zoneID, id string) (model.CloudflareDNSRecord, error) {
+	var dnsRecord model.CloudflareDNSRecord
 
 	result, err := repo.Connector.DNSRecord(zoneID, id)
 	if err != nil {
 		return dnsRecord, &customerror.RecordNotFound{
-			Type:             "CloudflareDnsRecord",
+			Type:             "CloudflareDNSRecord",
 			IdentifierColumn: "ID",
 			Identifier:       id,
 			Err:              err,
@@ -109,7 +109,7 @@ func (repo *DnsRecordRepositoryObj) Find(zoneID, id string) (model.CloudflareDns
 		}
 	}
 
-	dnsRecord = model.CloudflareDnsRecord{
+	dnsRecord = model.CloudflareDNSRecord{
 		ID:         result.ID,
 		ZoneID:     result.ZoneID,
 		Type:       result.Type,
@@ -127,8 +127,8 @@ func (repo *DnsRecordRepositoryObj) Find(zoneID, id string) (model.CloudflareDns
 
 // FindSingleByNameAndType tries to find a single DNS record for a zone with its name and type.
 // It will return an error in case multiple records match with the conditions
-func (repo *DnsRecordRepositoryObj) FindSingleByNameAndType(zoneID, name, t string) (model.CloudflareDnsRecord, error) {
-	var dnsRecord model.CloudflareDnsRecord
+func (repo *DNSRecordRepositoryObj) FindSingleByNameAndType(zoneID, name, t string) (model.CloudflareDNSRecord, error) {
+	var dnsRecord model.CloudflareDNSRecord
 
 	results, err := repo.Connector.DNSRecords(zoneID, cloudflareSDK.DNSRecord{
 		Name: name,
@@ -140,7 +140,7 @@ func (repo *DnsRecordRepositoryObj) FindSingleByNameAndType(zoneID, name, t stri
 
 	if len(results) == 0 {
 		return dnsRecord, &customerror.RecordNotFound{
-			Type:             "CloudflareDnsRecord",
+			Type:             "CloudflareDNSRecord",
 			IdentifierColumn: "Name",
 			Identifier:       name,
 		}
@@ -152,7 +152,7 @@ func (repo *DnsRecordRepositoryObj) FindSingleByNameAndType(zoneID, name, t stri
 	}
 
 	result := results[0]
-	dnsRecord = model.CloudflareDnsRecord{
+	dnsRecord = model.CloudflareDNSRecord{
 		ID:         result.ID,
 		ZoneID:     result.ZoneID,
 		Type:       result.Type,
@@ -169,7 +169,7 @@ func (repo *DnsRecordRepositoryObj) FindSingleByNameAndType(zoneID, name, t stri
 }
 
 // Update changes attributes of a single DNS record in a given zone
-func (repo *DnsRecordRepositoryObj) Update(zoneID string, dnsRecord model.CloudflareDnsRecord) (model.CloudflareDnsRecord, error) {
+func (repo *DNSRecordRepositoryObj) Update(zoneID string, dnsRecord model.CloudflareDNSRecord) (model.CloudflareDNSRecord, error) {
 	err := repo.Connector.UpdateDNSRecord(zoneID, dnsRecord.ID, cloudflareSDK.DNSRecord{
 		Type:    dnsRecord.Type,
 		Name:    dnsRecord.Name,

@@ -33,7 +33,7 @@ func newConfigProfileListCmd() *cobra.Command {
 				printCliErrorAndExit(err)
 			}
 
-			for name, _ := range list {
+			for name := range list {
 				fmt.Println(name)
 			}
 		},

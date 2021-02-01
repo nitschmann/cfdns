@@ -10,8 +10,8 @@ import (
 // IPv4CheckURL is the endpoint to detect the public IPv4
 const IPv4CheckURL string = "https://checkip.amazonaws.com"
 
-// GetPublicIpV4 fetches the current public IPv4 of this machine and network from an endpoint
-func (c *ClientObj) GetPublicIpV4() (string, error) {
+// GetPublicIPV4 fetches the current public IPv4 of this machine and network from an endpoint
+func (c *ClientObj) GetPublicIPV4() (string, error) {
 	var ip string
 
 	req, err := http.NewRequest("GET", IPv4CheckURL, nil)

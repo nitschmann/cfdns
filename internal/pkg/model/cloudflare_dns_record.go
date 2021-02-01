@@ -6,8 +6,8 @@ import (
 	"github.com/go-playground/validator/v10"
 )
 
-// CloudflareDnsRecord describes a Cloudflare DNS record
-type CloudflareDnsRecord struct {
+// CloudflareDNSRecord describes a Cloudflare DNS record
+type CloudflareDNSRecord struct {
 	ID         string
 	ZoneID     string `validate:"required"`
 	Type       string `validate:"required,oneof='A' 'AAAA' 'CNAME' 'HTTPS' 'TXT' 'SRV' 'LOC' 'MX' 'NS' 'SPF' 'CERT' 'DNSKEY' 'DS' 'NAPTR' 'SMIMEA' 'SSHFP' 'SVCB' 'TLSA' 'URI'"`
@@ -20,8 +20,8 @@ type CloudflareDnsRecord struct {
 	ModifiedOn time.Time
 }
 
-// Validate checks if the CloudflareDnsRecord struct is valid
-func (d CloudflareDnsRecord) Validate() error {
+// Validate checks if the CloudflareDNSRecord struct is valid
+func (d CloudflareDNSRecord) Validate() error {
 	validate := validator.New()
 	return validate.Struct(d)
 }

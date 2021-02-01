@@ -11,7 +11,7 @@ import (
 	"github.com/nitschmann/cfdns/internal/pkg/util/cmdhelper"
 )
 
-func newDnsRecordsCmd() *cobra.Command {
+func newDNSRecordsCmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:     "records [ZONE_ID_OR_NAME]",
 		Aliases: []string{"list", "r"},
@@ -30,12 +30,12 @@ Print list of all DNS records for a Cloudflare zone in a table. The zone could b
 				printCliErrorAndExit(err)
 			}
 
-			zone, err := zoneService.FindByIdOrName(args[0])
+			zone, err := zoneService.FindByIDOrName(args[0])
 			if err != nil {
 				printCliErrorAndExit(err)
 			}
 
-			dnsService, err := cloudflareServ.NewDnsService(cloudflareConfig)
+			dnsService, err := cloudflareServ.NewDNSService(cloudflareConfig)
 			if err != nil {
 				printCliErrorAndExit(err)
 			}

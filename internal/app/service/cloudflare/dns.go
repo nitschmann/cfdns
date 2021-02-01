@@ -9,8 +9,8 @@ import (
 	"github.com/nitschmann/cfdns/pkg/checkip"
 )
 
-// DnsService is the interface to manage Cloudflare zones service logic
-type DnsService interface {
+// DNSService is the interface to manage Cloudflare zones service logic
+type DNSService interface {
 	Create(
 		zoneID string,
 		t string,
@@ -19,34 +19,34 @@ type DnsService interface {
 		ttl int,
 		priority int,
 		proxied bool,
-	) (model.CloudflareDnsRecord, error)
-	DeleteByIdOrNameAndType(zone model.CloudflareZone, id string) (model.CloudflareDnsRecord, error)
-	FindSingleByIdOrNameAndType(zone model.CloudflareZone, id, t string) (model.CloudflareDnsRecord, error)
-	List(zoneID string) ([]model.CloudflareDnsRecord, error)
-	UpdateARecordContentToPublicIpV4(zone model.CloudflareZone, id string) (model.CloudflareDnsRecord, error)
+	) (model.CloudflareDNSRecord, error)
+	DeleteByIDOrNameAndType(zone model.CloudflareZone, id string) (model.CloudflareDNSRecord, error)
+	FindSingleByIDOrNameAndType(zone model.CloudflareZone, id, t string) (model.CloudflareDNSRecord, error)
+	List(zoneID string) ([]model.CloudflareDNSRecord, error)
+	UpdateARecordContentToPublicIPV4(zone model.CloudflareZone, id string) (model.CloudflareDNSRecord, error)
 }
 
-// DnsServiceObj implements the DnsService interface per default
-type DnsServiceObj struct {
+// DNSServiceObj implements the DNSService interface per default
+type DNSServiceObj struct {
 	Config     *model.CloudflareConfig
-	Repository cloudflareRepo.DnsRecordRepository
+	Repository cloudflareRepo.DNSRecordRepository
 }
 
-// NewDnsService returns a new pointer instance of DnsServiceObj with default values
-func NewDnsService(config *model.CloudflareConfig) (*DnsServiceObj, error) {
-	var service *DnsServiceObj
+// NewDNSService returns a new pointer instance of DNSServiceObj with default values
+func NewDNSService(config *model.CloudflareConfig) (*DNSServiceObj, error) {
+	var service *DNSServiceObj
 
 	err := config.Validate()
 	if err != nil {
 		return service, err
 	}
 
-	repo, err := cloudflareRepo.NewDnsRecordRepository(config)
+	repo, err := cloudflareRepo.NewDNSRecordRepository(config)
 	if err != nil {
 		return service, err
 	}
 
-	service = &DnsServiceObj{
+	service = &DNSServiceObj{
 		Config:     config,
 		Repository: repo,
 	}
@@ -55,7 +55,7 @@ func NewDnsService(config *model.CloudflareConfig) (*DnsServiceObj, error) {
 }
 
 // Create a new DNS record
-func (serv *DnsServiceObj) Create(
+func (serv *DNSServiceObj) Create(
 	zoneID string,
 	t string,
 	name string,
@@ -63,8 +63,8 @@ func (serv *DnsServiceObj) Create(
 	ttl int,
 	priority int,
 	proxied bool,
-) (model.CloudflareDnsRecord, error) {
-	dnsRecord := model.CloudflareDnsRecord{
+) (model.CloudflareDNSRecord, error) {
+	dnsRecord := model.CloudflareDNSRecord{
 		ZoneID:   zoneID,
 		Type:     t,
 		Name:     name,
@@ -87,30 +87,30 @@ func (serv *DnsServiceObj) Create(
 	return dnsRecord, nil
 }
 
-// DeleteByIdOrNameAndType deletes a DNS record from a zone and identifies it either by its ID or name + type
-func (serv *DnsServiceObj) DeleteByIdOrNameAndType(zone model.CloudflareZone, id, t string) (model.CloudflareDnsRecord, error) {
-	var deletedDnsRecord model.CloudflareDnsRecord
+// DeleteByIDOrNameAndType deletes a DNS record from a zone and identifies it either by its ID or name + type
+func (serv *DNSServiceObj) DeleteByIDOrNameAndType(zone model.CloudflareZone, id, t string) (model.CloudflareDNSRecord, error) {
+	var deletedDNSRecord model.CloudflareDNSRecord
 
-	dnsRecord, err := serv.FindSingleByIdOrNameAndType(zone, id, t)
+	dnsRecord, err := serv.FindSingleByIDOrNameAndType(zone, id, t)
 	if err != nil {
-		return deletedDnsRecord, err
+		return deletedDNSRecord, err
 	}
 
-	deletedDnsRecord, err = serv.Repository.Delete(zone.ID, dnsRecord)
+	deletedDNSRecord, err = serv.Repository.Delete(zone.ID, dnsRecord)
 	if err != nil {
-		return deletedDnsRecord, err
+		return deletedDNSRecord, err
 	}
 
-	return deletedDnsRecord, nil
+	return deletedDNSRecord, nil
 }
 
-// FindSingleByIdOrNameAndType tries to find a single DNS record for a zone by ID or with its name and type.
-func (serv *DnsServiceObj) FindSingleByIdOrNameAndType(zone model.CloudflareZone, id, t string) (model.CloudflareDnsRecord, error) {
+// FindSingleByIDOrNameAndType tries to find a single DNS record for a zone by ID or with its name and type.
+func (serv *DNSServiceObj) FindSingleByIDOrNameAndType(zone model.CloudflareZone, id, t string) (model.CloudflareDNSRecord, error) {
 	zoneID := zone.ID
 	dnsRecord, err := serv.Repository.Find(zoneID, id)
 	if err != nil {
 		if !strings.Contains(id, "."+zone.Name) {
-			id = zone.NormalizeDnsRecordName(id)
+			id = zone.NormalizeDNSRecordName(id)
 		}
 
 		dnsRecord, err = serv.Repository.FindSingleByNameAndType(zoneID, id, t)
@@ -123,16 +123,16 @@ func (serv *DnsServiceObj) FindSingleByIdOrNameAndType(zone model.CloudflareZone
 }
 
 // List returns a full list of DNS records for a zone
-func (serv *DnsServiceObj) List(zoneID string) ([]model.CloudflareDnsRecord, error) {
+func (serv *DNSServiceObj) List(zoneID string) ([]model.CloudflareDNSRecord, error) {
 	list, err := serv.Repository.FetchList(zoneID)
 	return list, err
 }
 
-// UpdateARecordContentToPublicIpV4 updates the DNS record content to fetched public IPv4
-func (serv *DnsServiceObj) UpdateARecordContentToPublicIpV4(zone model.CloudflareZone, id string) (model.CloudflareDnsRecord, error) {
-	var dnsRecord model.CloudflareDnsRecord
+// UpdateARecordContentToPublicIPV4 updates the DNS record content to fetched public IPv4
+func (serv *DNSServiceObj) UpdateARecordContentToPublicIPV4(zone model.CloudflareZone, id string) (model.CloudflareDNSRecord, error) {
+	var dnsRecord model.CloudflareDNSRecord
 
-	dnsRecord, err := serv.FindSingleByIdOrNameAndType(zone, id, "A")
+	dnsRecord, err := serv.FindSingleByIDOrNameAndType(zone, id, "A")
 	if err != nil {
 		return dnsRecord, err
 	}
@@ -142,12 +142,12 @@ func (serv *DnsServiceObj) UpdateARecordContentToPublicIpV4(zone model.Cloudflar
 	}
 
 	checkipClient := checkip.New()
-	publicIpV4, err := checkipClient.GetPublicIpV4()
+	publicIPV4, err := checkipClient.GetPublicIPV4()
 	if err != nil {
 		return dnsRecord, err
 	}
 
-	dnsRecord.Content = publicIpV4
+	dnsRecord.Content = publicIPV4
 	dnsRecord, err = serv.Repository.Update(zone.ID, dnsRecord)
 	if err != nil {
 		return dnsRecord, err

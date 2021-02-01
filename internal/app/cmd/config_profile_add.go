@@ -42,7 +42,7 @@ func newConfigProfileAddCmd() *cobra.Command {
 
 			profile := &model.ConfigProfile{
 				Name:   args[0],
-				ApiKey: apiKey,
+				APIKey: apiKey,
 				Email:  email,
 			}
 

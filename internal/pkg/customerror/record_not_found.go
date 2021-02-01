@@ -2,7 +2,7 @@ package customerror
 
 import "fmt"
 
-// RecordNotFoound is a custom error which could be thrown if API or DB records were not found
+// RecordNotFound is a custom error which could be thrown if API or DB records were not found
 type RecordNotFound struct {
 	Type             string
 	IdentifierColumn string

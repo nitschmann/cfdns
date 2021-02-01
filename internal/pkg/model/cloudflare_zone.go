@@ -15,8 +15,8 @@ type CloudflareZone struct {
 	ModifiedOn time.Time
 }
 
-// NormalizeDnsRecordName joins a name with the name of the zone.
+// NormalizeDNSRecordName joins a name with the name of the zone.
 // Example: test will become test.example.com for z with Name example.com
-func (z *CloudflareZone) NormalizeDnsRecordName(name string) string {
+func (z *CloudflareZone) NormalizeDNSRecordName(name string) string {
 	return strings.Join([]string{name, z.Name}, ".")
 }

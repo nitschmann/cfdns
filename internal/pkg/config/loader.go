@@ -30,6 +30,7 @@ func SetUpLoader() error {
 	return nil
 }
 
+// Load tries to load the viper found config file into a map of profiles
 func Load() error {
 	profiles = make(map[string]*model.ConfigProfile)
 	err := viper.Unmarshal(&profiles)

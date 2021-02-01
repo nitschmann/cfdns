@@ -10,7 +10,7 @@ import (
 	"github.com/nitschmann/cfdns/internal/pkg/util/cmdhelper"
 )
 
-func newDnsAddCmd() *cobra.Command {
+func newDNSAddCmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:     "add [ZONE_ID_OR_NAME]",
 		Aliases: []string{"a", "add-record"},
@@ -30,12 +30,12 @@ If successful, it prints the ID, type and name of the newly created DNS record. 
 				printCliErrorAndExit(err)
 			}
 
-			zone, err := zoneService.FindByIdOrName(args[0])
+			zone, err := zoneService.FindByIDOrName(args[0])
 			if err != nil {
 				printCliErrorAndExit(err)
 			}
 
-			dnsService, err := cloudflareServ.NewDnsService(cloudflareConfig)
+			dnsService, err := cloudflareServ.NewDNSService(cloudflareConfig)
 			if err != nil {
 				printCliErrorAndExit(err)
 			}
@@ -75,7 +75,7 @@ If successful, it prints the ID, type and name of the newly created DNS record. 
 			fmt.Println(strings.Join([]string{
 				dnsRecord.ID,
 				dnsRecord.Type,
-				zone.NormalizeDnsRecordName(dnsRecord.Name),
+				zone.NormalizeDNSRecordName(dnsRecord.Name),
 			}, ","))
 		},
 	}

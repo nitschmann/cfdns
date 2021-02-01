@@ -23,7 +23,7 @@ type ZoneRepositoryObj struct {
 func NewZoneRepository(config *model.CloudflareConfig) (*ZoneRepositoryObj, error) {
 	var repository *ZoneRepositoryObj
 
-	connector, err := cloudflareSDK.New(config.ApiKey, config.Email)
+	connector, err := cloudflareSDK.New(config.APIKey, config.Email)
 	if err != nil {
 		return repository, err
 	}
@@ -93,9 +93,9 @@ func (repo *ZoneRepositoryObj) FindByName(name string) (model.CloudflareZone, er
 				IdentifierColumn: "Name",
 				Identifier:       name,
 			}
-		} else {
-			return zone, err
 		}
+
+		return zone, err
 	}
 
 	zone, err = repo.Find(zoneID)

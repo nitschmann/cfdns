@@ -22,18 +22,18 @@ func GetCloudflareConfigByFlags(cmd *cobra.Command) (*model.CloudflareConfig, er
 	}
 
 	cloudflareConfig = &model.CloudflareConfig{
-		ApiKey: apiKey,
+		APIKey: apiKey,
 		Email:  email,
 	}
 
-	if cloudflareConfig.ApiKey == "" || cloudflareConfig.Email == "" {
+	if cloudflareConfig.APIKey == "" || cloudflareConfig.Email == "" {
 		configProfileName, err := cmd.Flags().GetString("profile")
 		if err != nil {
 			return cloudflareConfig, err
 		}
 
 		if configProfile, ok := configPkg.GetProfiles()[configProfileName]; ok {
-			cloudflareConfig.ApiKey = configProfile.ApiKey
+			cloudflareConfig.APIKey = configProfile.APIKey
 			cloudflareConfig.Email = configProfile.Email
 		}
 	}

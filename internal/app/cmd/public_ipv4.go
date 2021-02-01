@@ -9,7 +9,7 @@ import (
 	"github.com/nitschmann/cfdns/pkg/util/httpclient"
 )
 
-func newPublicIpV4Cmd() *cobra.Command {
+func newPublicIPV4Cmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:     "public-ipv4",
 		Aliases: []string{"ipv4", "IPv4", "outgoing-ip", "public-ip"},
@@ -17,14 +17,14 @@ func newPublicIpV4Cmd() *cobra.Command {
 		Long:    "Fetches (through network) the public and outgoing IPv4 address of the machine",
 		Run: func(cmd *cobra.Command, args []string) {
 			httpClient := httpclient.New()
-			publicIpService := publicIpServ.New(httpClient)
+			publicIPService := publicIpServ.New(httpClient)
 
-			publicIpV4, err := publicIpService.FetchPublicIpV4()
+			publicIPV4, err := publicIPService.FetchPublicIPV4()
 			if err != nil {
 				printCliErrorAndExit(err)
 			}
 
-			fmt.Println(publicIpV4)
+			fmt.Println(publicIPV4)
 		},
 	}
 

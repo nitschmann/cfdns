@@ -1,7 +1,6 @@
 package config
 
 import (
-	"errors"
 	"fmt"
 
 	"github.com/BurntSushi/toml"
@@ -39,7 +38,7 @@ func (serv *ProfileAddServiceObj) AddNewProfile(profile *model.ConfigProfile, fo
 	}
 
 	if _, ok := configProfiles[profile.Name]; ok && !forceOverwrite {
-		return errors.New(fmt.Sprintf("Profile '%s' already exists", profile.Name))
+		return fmt.Errorf("Profile '%s' already exists", profile.Name)
 	}
 
 	configProfiles[profile.Name] = profile

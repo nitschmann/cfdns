@@ -1,7 +1,6 @@
 package config
 
 import (
-	"errors"
 	"fmt"
 
 	"github.com/BurntSushi/toml"
@@ -20,7 +19,7 @@ type ProfileDeleteServiceObj struct {
 	configFilepath string
 }
 
-// NewProfileDeleteService returns a new pointer instance of ProfileDeleteServiceObj default values
+// NewProfileDeleteService returns a new pointer instance of ProfileDeleteServiceObj with default values
 func NewProfileDeleteService(configFilepath string) *ProfileDeleteServiceObj {
 	return &ProfileDeleteServiceObj{configFilepath: configFilepath}
 }
@@ -34,7 +33,7 @@ func (serv *ProfileDeleteServiceObj) DeleteProfile(name string) error {
 	}
 
 	if _, ok := configProfiles[name]; !ok {
-		return errors.New(fmt.Sprintf("No profile '%s' available", name))
+		return fmt.Errorf("No profile '%s' available", name)
 	}
 
 	delete(configProfiles, name)

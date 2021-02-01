@@ -43,7 +43,7 @@ func Execute() {
 // LoadSubCommands loads the sub-commands of RootCmd.Cmd
 func (r *RootCmd) LoadSubCommands() {
 	cmd := r.Cmd
-	cmd.AddCommand(newPublicIpV4Cmd())
+	cmd.AddCommand(newPublicIPV4Cmd())
 	cmd.AddCommand(newVersionCmd())
 	cmd.AddCommand(newZonesCmd())
 
@@ -53,7 +53,7 @@ func (r *RootCmd) LoadSubCommands() {
 	cmd.AddCommand(configCmd.cmd)
 
 	// dns command
-	dnsCmd := newDnsCmd()
+	dnsCmd := newDNSCmd()
 	dnsCmd.loadSubCommands()
 	cmd.AddCommand(dnsCmd.cmd)
 }

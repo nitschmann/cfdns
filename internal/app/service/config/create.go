@@ -2,7 +2,6 @@ package config
 
 import (
 	"bytes"
-	"errors"
 	"fmt"
 	"os"
 	"path"
@@ -63,7 +62,7 @@ func (serv *CreateServiceObj) Create(p string, force bool) (string, error) {
 
 	if _, err := os.Stat(configFilepath); err == nil {
 		if !force {
-			return "", errors.New(fmt.Sprintf("Config file '%s' already exists", configFilepath))
+			return "", fmt.Errorf("Config file '%s' already exists", configFilepath)
 		}
 
 		err := os.Truncate(configFilepath, 0)
@@ -102,7 +101,7 @@ func (serv *CreateServiceObj) createPathDirectoryIfNotExists(p string) error {
 func (serv *CreateServiceObj) initAndValidateProfileObj() (*model.ConfigProfile, error) {
 	profile := &model.ConfigProfile{
 		Name:   "default",
-		ApiKey: serv.apiKey,
+		APIKey: serv.apiKey,
 		Email:  serv.email,
 	}
 

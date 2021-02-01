@@ -32,8 +32,8 @@ func (v *ModelValidatorObj) IsValid() bool {
 	return err == nil
 }
 
-// TODO: Add custom error message here
 // Validate runs the validations in the v.Obj (if defined)
+// TODO: Add custom error message here
 func (v *ModelValidatorObj) Validate() error {
 	err := v.Validator.Struct(v.Obj)
 	return err

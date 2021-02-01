@@ -11,14 +11,14 @@ import (
 )
 
 var (
-	getPublicIpV4HttpCallResponse      *http.Response
-	getPublicIpV4HttpCallResponseError error
+	getPublicIPV4HttpCallResponse      *http.Response
+	getPublicIPV4HttpCallResponseError error
 )
 
-type getPublicIpV4HttpClient struct{}
+type getPublicIPV4HttpClient struct{}
 
-func (client *getPublicIpV4HttpClient) Do(req *http.Request) (*http.Response, error) {
-	return getPublicIpV4HttpCallResponse, getPublicIpV4HttpCallResponseError
+func (client *getPublicIPV4HttpClient) Do(req *http.Request) (*http.Response, error) {
+	return getPublicIPV4HttpCallResponse, getPublicIPV4HttpCallResponseError
 }
 
 type ClientObjSuite struct {
@@ -31,13 +31,13 @@ func TestClientObjSuite(t *testing.T) {
 
 func (suite *ClientObjSuite) BeforeTest(_, _ string) {
 	var emptyResponse *http.Response
-	getPublicIpV4HttpCallResponse = emptyResponse
+	getPublicIPV4HttpCallResponse = emptyResponse
 
 	var emptyError error
-	getPublicIpV4HttpCallResponseError = emptyError
+	getPublicIPV4HttpCallResponseError = emptyError
 }
 
-func (suite *ClientObjSuite) TestGetPublicIpV4() {
+func (suite *ClientObjSuite) TestGetPublicIPV4() {
 	tests := []struct {
 		name          string
 		c             *ClientObj
@@ -50,7 +50,7 @@ func (suite *ClientObjSuite) TestGetPublicIpV4() {
 		{
 			name: "with default happy path",
 			c: &ClientObj{
-				httpClient: &getPublicIpV4HttpClient{},
+				httpClient: &getPublicIPV4HttpClient{},
 			},
 			httpResp: &http.Response{
 				StatusCode: 200,
@@ -62,7 +62,7 @@ func (suite *ClientObjSuite) TestGetPublicIpV4() {
 		{
 			name: "with http not found status",
 			c: &ClientObj{
-				httpClient: &getPublicIpV4HttpClient{},
+				httpClient: &getPublicIPV4HttpClient{},
 			},
 			httpResp: &http.Response{
 				StatusCode: 404,
@@ -75,7 +75,7 @@ func (suite *ClientObjSuite) TestGetPublicIpV4() {
 		{
 			name: "with http request error",
 			c: &ClientObj{
-				httpClient: &getPublicIpV4HttpClient{},
+				httpClient: &getPublicIPV4HttpClient{},
 			},
 			httpResp:      &http.Response{},
 			httpRespError: errors.New("Random HTTP error"),
@@ -87,10 +87,10 @@ func (suite *ClientObjSuite) TestGetPublicIpV4() {
 
 	for _, tt := range tests {
 		suite.Run(tt.name, func() {
-			getPublicIpV4HttpCallResponse = tt.httpResp
-			getPublicIpV4HttpCallResponseError = tt.httpRespError
+			getPublicIPV4HttpCallResponse = tt.httpResp
+			getPublicIPV4HttpCallResponseError = tt.httpRespError
 
-			result, err := tt.c.GetPublicIpV4()
+			result, err := tt.c.GetPublicIPV4()
 			suite.Equal(result, tt.want)
 
 			if tt.wantErr {

@@ -10,7 +10,7 @@ import (
 	"github.com/nitschmann/cfdns/internal/pkg/util/cmdhelper"
 )
 
-func newDnsUpdateToPublicIpV4Cmd() *cobra.Command {
+func newDNSUpdateToPublicIPV4Cmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:     "update-to-public-ipv4 [ZONE_ID_OR_NAME] [DNS_RECORD_ID_OR_NAME]",
 		Aliases: []string{"IPv4"},
@@ -30,18 +30,18 @@ If successful, it prints the ID, type and name of the updated DNS record. [Forma
 				printCliErrorAndExit(err)
 			}
 
-			zone, err := zoneService.FindByIdOrName(args[0])
+			zone, err := zoneService.FindByIDOrName(args[0])
 			if err != nil {
 				printCliErrorAndExit(err)
 			}
 
-			dnsService, err := cloudflareServ.NewDnsService(cloudflareConfig)
+			dnsService, err := cloudflareServ.NewDNSService(cloudflareConfig)
 			if err != nil {
 				printCliErrorAndExit(err)
 			}
 
 			dnsRecordID := args[1]
-			dnsRecord, err := dnsService.UpdateARecordContentToPublicIpV4(zone, dnsRecordID)
+			dnsRecord, err := dnsService.UpdateARecordContentToPublicIPV4(zone, dnsRecordID)
 			if err != nil {
 				printCliErrorAndExit(err)
 			}

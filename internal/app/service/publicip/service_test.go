@@ -9,14 +9,14 @@ import (
 )
 
 var (
-	getPublicIpV4UtilResponse string
-	getPublicIpV4UtilError    error
+	getPublicIPV4UtilResponse string
+	getPublicIPV4UtilError    error
 )
 
 type UtilMock struct{}
 
-func (m *UtilMock) GetPublicIpV4() (string, error) {
-	return getPublicIpV4UtilResponse, getPublicIpV4UtilError
+func (m *UtilMock) GetPublicIPV4() (string, error) {
+	return getPublicIPV4UtilResponse, getPublicIPV4UtilError
 }
 
 type ServiceObjSuite struct {
@@ -29,10 +29,10 @@ func TestServiceObjSuite(t *testing.T) {
 
 func (suite *ServiceObjSuite) BeforeTest(_, _ string) {
 	var emptyString string
-	getPublicIpV4UtilResponse = emptyString
+	getPublicIPV4UtilResponse = emptyString
 
 	var emptyError error
-	getPublicIpV4UtilError = emptyError
+	getPublicIPV4UtilError = emptyError
 }
 
 func (suite *ServiceObjSuite) TestNew() {
@@ -58,7 +58,7 @@ func (suite *ServiceObjSuite) TestNew() {
 	}
 }
 
-func (suite *ServiceObjSuite) TestFetchPublicIpV4() {
+func (suite *ServiceObjSuite) TestFetchPublicIPV4() {
 	tests := []struct {
 		name     string
 		serv     Service
@@ -70,7 +70,7 @@ func (suite *ServiceObjSuite) TestFetchPublicIpV4() {
 		{
 			name: "with default happy path",
 			serv: &ServiceObj{
-				checkIpClient: &UtilMock{},
+				checkIPClient: &UtilMock{},
 			},
 			want:     "192.168.1.2",
 			wantErr:  false,
@@ -79,7 +79,7 @@ func (suite *ServiceObjSuite) TestFetchPublicIpV4() {
 		{
 			name: "with util returning an error",
 			serv: &ServiceObj{
-				checkIpClient: &UtilMock{},
+				checkIPClient: &UtilMock{},
 			},
 			want:     "",
 			wantErr:  true,
@@ -89,10 +89,10 @@ func (suite *ServiceObjSuite) TestFetchPublicIpV4() {
 	}
 	for _, tt := range tests {
 		suite.Run(tt.name, func() {
-			getPublicIpV4UtilResponse = tt.utilResp
-			getPublicIpV4UtilError = tt.utilErr
+			getPublicIPV4UtilResponse = tt.utilResp
+			getPublicIPV4UtilError = tt.utilErr
 
-			result, err := tt.serv.FetchPublicIpV4()
+			result, err := tt.serv.FetchPublicIPV4()
 			suite.Equal(result, tt.want)
 
 			if tt.wantErr {

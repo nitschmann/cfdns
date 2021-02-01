@@ -10,7 +10,7 @@ import (
 	"github.com/nitschmann/cfdns/internal/pkg/util/cmdhelper"
 )
 
-func newDnsDeleteCmd() *cobra.Command {
+func newDNSDeleteCmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:     "delete [ZONE_ID_OR_NAME] [DNS_RECORD_ID_OR_NAME]",
 		Aliases: []string{"d", "delete-record"},
@@ -32,12 +32,12 @@ If successful, it prints the ID, type and name of the deleted DNS record. [Forma
 				printCliErrorAndExit(err)
 			}
 
-			zone, err := zoneService.FindByIdOrName(args[0])
+			zone, err := zoneService.FindByIDOrName(args[0])
 			if err != nil {
 				printCliErrorAndExit(err)
 			}
 
-			dnsService, err := cloudflareServ.NewDnsService(cloudflareConfig)
+			dnsService, err := cloudflareServ.NewDNSService(cloudflareConfig)
 			if err != nil {
 				printCliErrorAndExit(err)
 			}
@@ -49,12 +49,12 @@ If successful, it prints the ID, type and name of the deleted DNS record. [Forma
 				printCliErrorAndExit(err)
 			}
 
-			deletedDnsRecord, err := dnsService.DeleteByIdOrNameAndType(zone, dnsRecordID, dnsRecordType)
+			deletedDNSRecord, err := dnsService.DeleteByIDOrNameAndType(zone, dnsRecordID, dnsRecordType)
 			if err != nil {
 				printCliErrorAndExit(err)
 			}
 
-			fmt.Println(strings.Join([]string{deletedDnsRecord.ID, deletedDnsRecord.Type, deletedDnsRecord.Name}, ","))
+			fmt.Println(strings.Join([]string{deletedDNSRecord.ID, deletedDNSRecord.Type, deletedDNSRecord.Name}, ","))
 
 		},
 	}

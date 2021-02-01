@@ -4,7 +4,7 @@ import "github.com/nitschmann/cfdns/pkg/util/httpclient"
 
 // Client is the interface for the checkip package
 type Client interface {
-	GetPublicIpV4() (string, error)
+	GetPublicIPV4() (string, error)
 }
 
 // ClientObj implements the Cliet interface per default
@@ -17,7 +17,7 @@ func New() *ClientObj {
 	return &ClientObj{httpClient: httpclient.New()}
 }
 
-// NewWithHttpClient returns a new pointer instance of ClientObj with a custom http.Client
-func NewWithHttpClient(httpClient httpclient.Client) *ClientObj {
+// NewWithHTTPClient returns a new pointer instance of ClientObj with a custom http.Client
+func NewWithHTTPClient(httpClient httpclient.Client) *ClientObj {
 	return &ClientObj{httpClient: httpClient}
 }

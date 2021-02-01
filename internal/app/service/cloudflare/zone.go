@@ -8,7 +8,7 @@ import (
 
 // ZoneService is the interface to manage Cloudflare zones service logic
 type ZoneService interface {
-	FindByIdOrName(id string) (model.CloudflareZone, error)
+	FindByIDOrName(id string) (model.CloudflareZone, error)
 	List() ([]model.CloudflareZone, error)
 }
 
@@ -40,8 +40,8 @@ func NewZoneService(config *model.CloudflareConfig) (*ZoneServiceObj, error) {
 	return service, nil
 }
 
-// FindByIdOrName tries to find a Cloudflare zone through the API via its ID or name
-func (serv *ZoneServiceObj) FindByIdOrName(id string) (model.CloudflareZone, error) {
+// FindByIDOrName tries to find a Cloudflare zone through the API via its ID or name
+func (serv *ZoneServiceObj) FindByIDOrName(id string) (model.CloudflareZone, error) {
 	var zone model.CloudflareZone
 
 	zone, err := serv.Repository.FindByName(id)

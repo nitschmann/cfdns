@@ -10,7 +10,7 @@ type dnsCmd struct {
 	cmd *cobra.Command
 }
 
-func newDnsCmd() *dnsCmd {
+func newDNSCmd() *dnsCmd {
 	cmd := &cobra.Command{
 		Use:     "dns",
 		Aliases: []string{"d"},
@@ -28,8 +28,8 @@ func newDnsCmd() *dnsCmd {
 }
 
 func (cmd *dnsCmd) loadSubCommands() {
-	cmd.cmd.AddCommand(newDnsAddCmd())
-	cmd.cmd.AddCommand(newDnsDeleteCmd())
-	cmd.cmd.AddCommand(newDnsUpdateToPublicIpV4Cmd())
-	cmd.cmd.AddCommand(newDnsRecordsCmd())
+	cmd.cmd.AddCommand(newDNSAddCmd())
+	cmd.cmd.AddCommand(newDNSDeleteCmd())
+	cmd.cmd.AddCommand(newDNSUpdateToPublicIPV4Cmd())
+	cmd.cmd.AddCommand(newDNSRecordsCmd())
 }

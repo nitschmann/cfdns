@@ -86,3 +86,7 @@ build-new-version-linux-arm64:
 .PHONY: clean-build
 clean-build:
 	rm -rf .build/releaser*
+
+.PHONY: generate-docs
+generate-docs:
+	$(GOCMD) run tools/gendocs/main.go

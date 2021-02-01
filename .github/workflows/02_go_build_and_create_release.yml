@@ -9,10 +9,10 @@ jobs:
     name: Build
     runs-on: ubuntu-latest
     steps:
-    - name: Set up Go 1.14
+    - name: Set up Go 1.15
       uses: actions/setup-go@v2
       with:
-        go-version: ^1.14
+        go-version: ^1.15
       id: go
 
     - name: Check out code into the Go module directory
@@ -62,52 +62,52 @@ jobs:
         body: |
           ${{ steps.release_info.outputs.changelog }}
 
-    # - name: Upload release asset binary releaser-darwin-amd64
-    #   uses: actions/upload-release-asset@v1
-    #   env:
-    #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-    #   with:
-    #     upload_url: ${{ steps.create_release.outputs.upload_url }}
-    #     asset_path: ./.build/releaser-darwin-amd64
-    #     asset_name: releaser-darwin-amd64
-    #     asset_content_type: application/binary
+    - name: Upload release asset binary cfdns-darwin-amd64
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ./.build/cfdns-darwin-amd64
+        asset_name: cfdns-darwin-amd64
+        asset_content_type: application/binary
 
-    # - name: Upload release asset binary releaser-linux-386
-    #   uses: actions/upload-release-asset@v1
-    #   env:
-    #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-    #   with:
-    #     upload_url: ${{ steps.create_release.outputs.upload_url }}
-    #     asset_path: ./.build/releaser-linux-386
-    #     asset_name: releaser-linux-386
-    #     asset_content_type: application/binary
+    - name: Upload release asset binary cfdns-linux-386
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ./.build/cfdns-linux-386
+        asset_name: cfdns-linux-386
+        asset_content_type: application/binary
 
-    # - name: Upload release asset binary releaser-linux-amd64
-    #   uses: actions/upload-release-asset@v1
-    #   env:
-    #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-    #   with:
-    #     upload_url: ${{ steps.create_release.outputs.upload_url }}
-    #     asset_path: ./.build/releaser-linux-amd64
-    #     asset_name: releaser-linux-amd64
-    #     asset_content_type: application/binary
+    - name: Upload release asset binary cfdns-linux-amd64
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ./.build/cfdns-linux-amd64
+        asset_name: cfdns-linux-amd64
+        asset_content_type: application/binary
 
-    # - name: Upload release asset binary releaser-linux-arm
-    #   uses: actions/upload-release-asset@v1
-    #   env:
-    #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-    #   with:
-    #     upload_url: ${{ steps.create_release.outputs.upload_url }}
-    #     asset_path: ./.build/releaser-linux-arm
-    #     asset_name: releaser-linux-arm
-    #     asset_content_type: application/binary
+    - name: Upload release asset binary cfdns-linux-arm
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ./.build/cfdns-linux-arm
+        asset_name: cfdns-linux-arm
+        asset_content_type: application/binary
 
-    # - name: Upload release asset binary releaser-linux-arm64
-    #   uses: actions/upload-release-asset@v1
-    #   env:
-    #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-    #   with:
-    #     upload_url: ${{ steps.create_release.outputs.upload_url }}
-    #     asset_path: ./.build/releaser-linux-arm64
-    #     asset_name: releaser-linux-arm64
-    #     asset_content_type: application/binary
+    - name: Upload release asset binary cfdns-linux-arm64
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ./.build/cfdns-linux-arm64
+        asset_name: cfdns-linux-arm64
+        asset_content_type: application/binary
